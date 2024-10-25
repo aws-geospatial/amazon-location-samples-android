@@ -10,12 +10,11 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven {
+            url = file("${rootDir}/aws-sdk-kotlin-preview/m2").toURI()
+        }
     }
 }
 
 rootProject.name = "Amazon Location Sample App"
 include(":app")
-include(":trackingSdk")
-project(":trackingSdk").projectDir = file("./trackingSdk/library")
-include(":authSdk")
-project(":authSdk").projectDir = file("./authSdk/library")

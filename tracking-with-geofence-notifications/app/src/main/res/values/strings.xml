@@ -23,13 +23,17 @@
     <string name="label_config_section">Config section</string>
     <string name="label_log_in_to_access_configuration_settings">Log in to access configuration settings</string>
     <string name="error_please_enter_identity_pool_id">Please enter identity pool id</string>
+    <string name="error_please_enter_api_key">Please enter api key</string>
+    <string name="error_please_enter_api_key_region">Please enter region for api key</string>
     <string name="label_time_filter">Time filter</string>
     <string name="label_distance_filter">Distance filter</string>
     <string name="label_accuracy_filter">Accuracy filter</string>
     <string name="label_meter">meter</string>
     <string name="label_second">second</string>
     <string name="label_tracker_name">Tracker name</string>
-    <string name="label_map_name">Map name</string>
+    <string name="label_api_key_region">API key Region</string>
+    <string name="label_api_key">API key</string>
+    <string name="label_map_style">Map style</string>
     <string name="error_please_enter_tracker_name">Please enter tracker name</string>
-    <string name="error_please_enter_map_name">Please enter map name</string>
+    <string name="error_please_enter_map_style">Please enter map style</string>
 </resources>

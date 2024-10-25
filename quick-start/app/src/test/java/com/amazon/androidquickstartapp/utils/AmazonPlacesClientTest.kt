@@ -2,7 +2,7 @@
 package com.amazon.androidquickstartapp.utils
 
 import android.content.Context
-import aws.sdk.kotlin.services.location.LocationClient
+import aws.sdk.kotlin.services.geoplaces.GeoPlacesClient
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -17,11 +17,11 @@ import org.junit.Test
 import software.amazon.location.auth.EncryptedSharedPreferences
 import software.amazon.location.auth.utils.Constants
 
-class AmazonLocationClientTest {
+class AmazonPlacesClientTest {
 
     private lateinit var context: Context
-    private lateinit var mockLocationClient: LocationClient
-    private lateinit var amazonLocationClient: AmazonLocationClient
+    private lateinit var mockLocationClient: GeoPlacesClient
+    private lateinit var amazonLocationClient: AmazonPlacesClient
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
     @Before
     fun setUp() {
@@ -43,9 +43,9 @@ class AmazonLocationClientTest {
         every { anyConstructed<EncryptedSharedPreferences>().get(Constants.SECRET_KEY) } returns "test"
         every { anyConstructed<EncryptedSharedPreferences>().get(Constants.SESSION_TOKEN) } returns "test"
         every { anyConstructed<EncryptedSharedPreferences>().get(Constants.EXPIRATION) } returns "11111"
-        amazonLocationClient = AmazonLocationClient(mockLocationClient)
+        amazonLocationClient = AmazonPlacesClient(mockLocationClient)
         coroutineScope.launch {
-            amazonLocationClient.reverseGeocode("indexName", 0.0, 0.0, "en", 10)
+            amazonLocationClient.reverseGeocode(23.151, 27.262, "en", 10)
             assertNotNull(amazonLocationClient)
         }
     }

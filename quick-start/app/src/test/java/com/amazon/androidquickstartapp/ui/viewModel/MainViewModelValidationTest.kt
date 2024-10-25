@@ -2,7 +2,6 @@ package com.amazon.androidquickstartapp.ui.viewModel
 
 import android.content.Context
 import com.amazon.androidquickstartapp.utils.Constants.IDENTITY_POOL_ID
-import com.amazon.androidquickstartapp.utils.Constants.INDEX_NAME
 import com.amazon.androidquickstartapp.utils.Constants.MAP_NAME
 import com.amazon.androidquickstartapp.utils.Constants.REGION
 import com.amazon.androidquickstartapp.utils.Helper
@@ -38,9 +37,8 @@ class MainViewModelValidationTest {
     fun `test checkValidations when all fields are empty`() {
         every { mockHelper.showToast(any(), any()) } just runs
         viewModel.identityPoolId = ""
-        viewModel.mapName  = ""
+        viewModel.mapStyle  = ""
         viewModel.region = ""
-        viewModel.indexName = ""
 
         assertEquals(true, viewModel.checkValidations(context))
     }
@@ -49,9 +47,8 @@ class MainViewModelValidationTest {
     fun `test checkValidations when mapName is empty`() {
         every { mockHelper.showToast(any(), any()) } just runs
         viewModel.identityPoolId = IDENTITY_POOL_ID
-        viewModel.mapName = ""
+        viewModel.mapStyle = ""
         viewModel.region = REGION
-        viewModel.indexName = INDEX_NAME
 
         assertEquals(true, viewModel.checkValidations(context))
     }
@@ -59,9 +56,8 @@ class MainViewModelValidationTest {
     @Test
     fun `test checkValidations when all fields are not empty`() {
         viewModel.identityPoolId = IDENTITY_POOL_ID
-        viewModel.mapName = MAP_NAME
+        viewModel.mapStyle = MAP_NAME
         viewModel.region = REGION
-        viewModel.indexName = INDEX_NAME
 
         assertEquals(false, viewModel.checkValidations(context))
     }
