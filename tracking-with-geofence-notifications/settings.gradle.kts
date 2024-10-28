@@ -15,7 +15,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "Amazon Location Sample App"
 include(":app")
-include(":trackingSdk")
-project(":trackingSdk").projectDir = file("./trackingSdk/library")
-include(":authSdk")
-project(":authSdk").projectDir = file("./authSdk/library")

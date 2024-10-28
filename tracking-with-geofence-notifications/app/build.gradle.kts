@@ -27,7 +27,9 @@ android {
         buildConfigField("String", "TOPIC_TRACKER", "\"${customConfig.getProperty("TOPIC_TRACKER")}\"")
         buildConfigField("String", "DEFAULT_TRACKER_NAME", "\"${customConfig.getProperty("DEFAULT_TRACKER_NAME")}\"")
         buildConfigField("String", "TEST_POOL_ID", "\"${customConfig.getProperty("TEST_POOL_ID")}\"")
-        buildConfigField("String", "TEST_MAP_NAME", "\"${customConfig.getProperty("TEST_MAP_NAME")}\"")
+        buildConfigField("String", "TEST_MAP_STYLE", "\"${customConfig.getProperty("TEST_MAP_STYLE")}\"")
+        buildConfigField("String", "TEST_API_KEY_REGION", "\"${customConfig.getProperty("TEST_API_KEY_REGION")}\"")
+        buildConfigField("String", "TEST_API_KEY", "\"${customConfig.getProperty("TEST_API_KEY")}\"")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -75,10 +77,10 @@ dependencies {
     implementation("com.google.android.gms:play-services-location:21.1.0")
     implementation("org.maplibre.gl:android-sdk:11.0.0-pre5")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation("aws.sdk.kotlin:cognitoidentity:1.2.21")
+    implementation("aws.sdk.kotlin:cognitoidentity:1.3.29")
     implementation("com.amazonaws:aws-iot-device-sdk-java:1.3.9")
-    implementation("aws.sdk.kotlin:iot:1.2.28")
-    implementation("aws.sdk.kotlin:location:1.2.21")
+    implementation("aws.sdk.kotlin:iot:1.3.29")
+    implementation("aws.sdk.kotlin:location:1.3.29")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.6.5")
     debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.5")
     androidTestImplementation("androidx.test.uiautomator:uiautomator:2.3.0")
@@ -90,7 +92,7 @@ dependencies {
     if (findProject(":trackingSdk") != null) {
         implementation(project(mapOf("path" to ":trackingSdk")))
     } else {
-        implementation("software.amazon.location:tracking:0.2.4")
+        implementation("software.amazon.location:tracking:0.2.5")
     }
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

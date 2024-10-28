@@ -1,13 +1,14 @@
 package com.amazon.androidquickstartapp.ui.viewModel
 
 import android.content.Context
-import aws.sdk.kotlin.services.location.LocationClient
-import aws.sdk.kotlin.services.location.model.Place
-import aws.sdk.kotlin.services.location.model.SearchForPositionResult
-import aws.sdk.kotlin.services.location.model.SearchPlaceIndexForPositionResponse
+import aws.sdk.kotlin.services.geoplaces.GeoPlacesClient
+import aws.sdk.kotlin.services.geoplaces.model.Address
+import aws.sdk.kotlin.services.geoplaces.model.PlaceType
+import aws.sdk.kotlin.services.geoplaces.model.ReverseGeocodeResponse
+import aws.sdk.kotlin.services.geoplaces.model.ReverseGeocodeResultItem
+import com.amazon.androidquickstartapp.utils.AmazonPlacesClient
 import com.amazon.androidquickstartapp.utils.Constants.EXPECTED_LABEL
 import io.mockk.coEvery
-
 import io.mockk.mockk
 import io.mockk.mockkConstructor
 import junit.framework.TestCase.assertEquals
@@ -16,7 +17,6 @@ import org.junit.Before
 import org.junit.Test
 import org.maplibre.android.geometry.LatLng
 import org.mockito.Mock
-import com.amazon.androidquickstartapp.utils.AmazonLocationClient
 import software.amazon.location.auth.LocationCredentialsProvider
 
 
@@ -25,7 +25,7 @@ class MainViewModelReverseGeocodeTest {
     private lateinit var viewModel: MainViewModel
 
     @Mock
-    private lateinit var locationCredentialsProvider: LocationCredentialsProvider
+    private lateinit var geoPlacesClient: GeoPlacesClient
 
     @Mock
     lateinit var context: Context
@@ -33,30 +33,30 @@ class MainViewModelReverseGeocodeTest {
     @Before
     fun setUp() {
         context = mockk(relaxed = true)
-        locationCredentialsProvider = mockk()
+        geoPlacesClient = mockk()
         viewModel = MainViewModel()
         mockkConstructor(LocationCredentialsProvider::class)
-        mockkConstructor(AmazonLocationClient::class)
+        mockkConstructor(AmazonPlacesClient::class)
     }
 
     @Test
     fun `test reverseGeocode`() {
-        val mockAmazonLocationClient = mockk<LocationClient>()
-        coEvery {
-            locationCredentialsProvider.getLocationClient()
-        } returns mockAmazonLocationClient
-        val searchPlaceIndexForPositionResponse = SearchPlaceIndexForPositionResponse.invoke {
-            results = listOf(SearchForPositionResult.invoke {
-                distance = 20.0
+        val mockAmazonLocationClient = mockk<AmazonPlacesClient>()
+        viewModel.getPlaceClient = geoPlacesClient
+        viewModel.amazonPlacesClient = mockAmazonLocationClient
+        val searchPlaceIndexForPositionResponse = ReverseGeocodeResponse {
+            resultItems = listOf(ReverseGeocodeResultItem {
+                distance = 20L
                 placeId = "11"
-                place = Place.invoke {
+                title = "test"
+                placeType = PlaceType.Block
+                address = Address {
                     label = EXPECTED_LABEL
                 }
             })
-            summary = null
+            pricingBucket = "test"
         }
-        viewModel.locationCredentialsProvider = locationCredentialsProvider
-        coEvery { mockAmazonLocationClient.searchPlaceIndexForPosition(any()) } returns searchPlaceIndexForPositionResponse
+        coEvery { mockAmazonLocationClient.reverseGeocode(any(), any(), any(), any()) } returns searchPlaceIndexForPositionResponse
         val latLng = LatLng(37.7749, -122.4194)
 
         runBlocking {

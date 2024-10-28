@@ -21,7 +21,6 @@ import com.amazon.androidquickstartapp.ui.theme.AndroidQuickStartAppTheme
 import com.amazon.androidquickstartapp.ui.view.MapLoadScreen
 import com.amazon.androidquickstartapp.ui.viewModel.MainViewModel
 import com.amazon.androidquickstartapp.utils.Constants.REVERSE_GEO_THRESH_HOLD
-import com.amazon.androidquickstartapp.utils.Constants.SERVICE_NAME
 import com.amazon.androidquickstartapp.utils.Constants.TRACKER_LINE_LAYER
 import com.amazon.androidquickstartapp.utils.Constants.TRACKER_LINE_SOURCE
 import com.amazon.androidquickstartapp.utils.Constants.TRACKING_FREQUENCY_MILLIS
@@ -31,17 +30,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import okhttp3.OkHttpClient
 import org.maplibre.android.MapLibre
 import org.maplibre.android.camera.CameraPosition
 import org.maplibre.android.geometry.LatLng
 import org.maplibre.android.maps.MapLibreMap
 import org.maplibre.android.maps.OnMapReadyCallback
 import org.maplibre.android.maps.Style
-import org.maplibre.android.module.http.HttpRequestUtil
 import org.maplibre.geojson.Point
 import software.amazon.location.auth.AuthHelper
-import software.amazon.location.auth.AwsSignerInterceptor
 import software.amazon.location.tracking.aws.LocationTrackingCallback
 import software.amazon.location.tracking.config.LocationTrackerConfig
 import software.amazon.location.tracking.database.LocationEntry
@@ -253,17 +249,6 @@ class MainActivity : ComponentActivity(), OnMapReadyCallback, MapLibreMap.OnCame
             mainViewModel.initializeLocationCredentialsProvider(authHelper)
             mainViewModel.authenticated = true
             mainViewModel.locationCredentialsProvider?.let {
-                HttpRequestUtil.setOkHttpClient(
-                    OkHttpClient.Builder()
-                        .addInterceptor(
-                            AwsSignerInterceptor(
-                                SERVICE_NAME,
-                                mainViewModel.region,
-                                it
-                            )
-                        )
-                        .build()
-                )
                 val config = LocationTrackerConfig(
                     trackerName = mainViewModel.trackerName,
                     logLevel = TrackingSdkLogLevel.DEBUG,
@@ -280,12 +265,7 @@ class MainActivity : ComponentActivity(), OnMapReadyCallback, MapLibreMap.OnCame
 
     override fun onMapReady(map: MapLibreMap) {
         mainViewModel.mapLibreMap = map
-        map.setStyle(
-            Style.Builder()
-                .fromUri(
-                    "https://maps.geo.${mainViewModel.region}.amazonaws.com/maps/v0/maps/${mainViewModel.mapName}/style-descriptor"
-                ),
-        ) {
+        map.setStyle(Style.Builder().fromUri(getMapUrl())) {
             map.uiSettings.isAttributionEnabled = true
             map.uiSettings.isLogoEnabled = false
             map.uiSettings.attributionGravity = Gravity.BOTTOM or Gravity.END
@@ -307,6 +287,9 @@ class MainActivity : ComponentActivity(), OnMapReadyCallback, MapLibreMap.OnCame
             }
         }
     }
+
+    private fun getMapUrl() =
+        "https://maps.geo.${BuildConfig.API_KEY_REGION}.amazonaws.com/v2/styles/${mainViewModel.mapStyle}/descriptor?key=${BuildConfig.API_KEY}"
 
     private fun getLabelFromPosition(latLng: LatLng) {
         CoroutineScope(Dispatchers.IO).launch {

@@ -53,12 +53,16 @@ These filters help in optimizing the location tracking to suit different use cas
     ```properties
     DEFAULT_TRACKER_NAME=xxxxxxx
     TEST_POOL_ID=<MY-AWS-REGION>:xxxxxxxxxxxxxxxxxxxxxxxxxx
-    TEST_MAP_NAME=xxxxxxxxxxxxxxxxxxx
+    TEST_MAP_STYLE=xxxxxxxxxxxxxxxxxxx
+    TEST_API_KEY=xx.xxxxxxx.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    TEST_API_KEY_REGION=<MY-AWS-API_KEY_REGION>
    ```
 
    - **DEFAULT_TRACKER_NAME**: The name of the tracker resource in Amazon Location Service used for tracking location updates.
    - **TEST_POOL_ID**: Your AWS Cognito Identity Pool ID used for authenticating users.
-   - **TEST_MAP_NAME**: The name of the map resource in the Amazon Location Service you want to use to display the map.
+   - **TEST_MAP_STYLE**: The style name of the map resource in the Amazon Location Service you want to use to display the map.
+   - **TEST_API_KEY**: Your V2 api key used for authenticating users to access maps, routes and places.
+   - **TEST_API_KEY_REGION**: Your V2 AWS region.
 
 2. Create and run the emulator of the latest Android version or plug in the real Android device.
 3. Now open the `DefaultFlowSuite` file located inside the `androidTest` directory and click on the play button.
