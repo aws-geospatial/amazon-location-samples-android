@@ -10,9 +10,6 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven {
-            url = file("${rootDir}/aws-sdk-kotlin-preview/m2").toURI()
-        }
     }
 }
 
