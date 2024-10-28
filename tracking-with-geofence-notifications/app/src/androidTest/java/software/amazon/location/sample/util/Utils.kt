@@ -32,7 +32,7 @@ fun signIn(composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActi
         .performTextInput(BuildConfig.DEFAULT_TRACKER_NAME)
     composeTestRule.onNodeWithText(MAP_STYLE)
         .performClick()
-        .performTextInput(BuildConfig.TEST_MAP_NAME)
+        .performTextInput(BuildConfig.TEST_MAP_STYLE)
     composeTestRule.onNodeWithTag(BTN_SIGN_IN).performClick()
     composeTestRule.waitForIdle()
 }

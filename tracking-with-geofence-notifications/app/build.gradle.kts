@@ -27,7 +27,7 @@ android {
         buildConfigField("String", "TOPIC_TRACKER", "\"${customConfig.getProperty("TOPIC_TRACKER")}\"")
         buildConfigField("String", "DEFAULT_TRACKER_NAME", "\"${customConfig.getProperty("DEFAULT_TRACKER_NAME")}\"")
         buildConfigField("String", "TEST_POOL_ID", "\"${customConfig.getProperty("TEST_POOL_ID")}\"")
-        buildConfigField("String", "TEST_MAP_NAME", "\"${customConfig.getProperty("TEST_MAP_NAME")}\"")
+        buildConfigField("String", "TEST_MAP_STYLE", "\"${customConfig.getProperty("TEST_MAP_STYLE")}\"")
         buildConfigField("String", "TEST_API_KEY_REGION", "\"${customConfig.getProperty("TEST_API_KEY_REGION")}\"")
         buildConfigField("String", "TEST_API_KEY", "\"${customConfig.getProperty("TEST_API_KEY")}\"")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
