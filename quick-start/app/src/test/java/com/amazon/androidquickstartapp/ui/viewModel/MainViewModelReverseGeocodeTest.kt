@@ -44,7 +44,7 @@ class MainViewModelReverseGeocodeTest {
         val mockAmazonLocationClient = mockk<AmazonPlacesClient>()
         viewModel.getPlaceClient = geoPlacesClient
         viewModel.amazonPlacesClient = mockAmazonLocationClient
-        val searchPlaceIndexForPositionResponse = ReverseGeocodeResponse {
+        val reverseGeocodeResponse = ReverseGeocodeResponse {
             resultItems = listOf(ReverseGeocodeResultItem {
                 distance = 20L
                 placeId = "11"
@@ -56,7 +56,7 @@ class MainViewModelReverseGeocodeTest {
             })
             pricingBucket = "test"
         }
-        coEvery { mockAmazonLocationClient.reverseGeocode(any(), any(), any(), any()) } returns searchPlaceIndexForPositionResponse
+        coEvery { mockAmazonLocationClient.reverseGeocode(any(), any(), any(), any()) } returns reverseGeocodeResponse
         val latLng = LatLng(37.7749, -122.4194)
 
         runBlocking {
