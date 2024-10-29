@@ -17,11 +17,12 @@ android {
         versionCode = 1
         versionName = "1.0.0"
 
+        buildConfigField("String", "API_KEY_REGION", "\"${customConfig.getProperty("API_KEY_REGION")}\"")
+        buildConfigField("String", "API_KEY", "\"${customConfig.getProperty("API_KEY")}\"")
         buildConfigField("String", "IDENTITY_POOL_ID", "\"${customConfig.getProperty("IDENTITY_POOL_ID")}\"")
         buildConfigField("String", "TRACKER_NAME", "\"${customConfig.getProperty("TRACKER_NAME")}\"")
         buildConfigField("String", "REGION", "\"${customConfig.getProperty("REGION")}\"")
-        buildConfigField("String", "PLACE_INDEX", "\"${customConfig.getProperty("PLACE_INDEX")}\"")
-        buildConfigField("String", "MAP_NAME", "\"${customConfig.getProperty("MAP_NAME")}\"")
+        buildConfigField("String", "MAP_STYLE", "\"${customConfig.getProperty("MAP_STYLE")}\"")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
@@ -74,9 +75,16 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.org.maplibre.gl)
     implementation(libs.com.squareup.okhttp3)
-    implementation(libs.location)
-    implementation(libs.auth)
+    if (findProject(":authSdk") != null) {
+        //TODO remove this once auth sdk updated
+        implementation(project(mapOf("path" to ":authSdk")))
+    } else {
+        //TODO update this once auth sdk updated
+        implementation(libs.auth)
+    }
     implementation(libs.tracking)
+    //TODO update this once places sdk is live
+    implementation(libs.geoplaces)
     testImplementation(libs.mockk)
     testImplementation(libs.mockito.core)
     androidTestImplementation(libs.androidx.uiautomator)

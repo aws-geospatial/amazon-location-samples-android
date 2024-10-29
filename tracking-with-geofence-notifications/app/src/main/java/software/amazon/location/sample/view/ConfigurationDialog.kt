@@ -59,6 +59,30 @@ fun ConfigurationDialog(
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                     )
                     Spacer(modifier = Modifier.height(8.dp))
+
+
+                    OutlinedTextField(
+                        value = mainViewModel.apiKey,
+                        onValueChange = {
+                            mainViewModel.apiKey = it
+                        },
+                        maxLines = 4,
+                        label = { Text(stringResource(R.string.label_api_key)) },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+
+
+                    OutlinedTextField(
+                        value = mainViewModel.region,
+                        onValueChange = {
+                            mainViewModel.region = it
+                        },
+                        label = { Text(stringResource(R.string.label_api_key_region)) },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+
                     OutlinedTextField(
                         value = mainViewModel.trackerName,
                         onValueChange = {
@@ -67,14 +91,14 @@ fun ConfigurationDialog(
                         label = { Text(stringResource(R.string.label_tracker_name)) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                     )
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     OutlinedTextField(
-                        value = mainViewModel.mapName,
+                        value = mainViewModel.mapStyle,
                         onValueChange = {
-                            mainViewModel.mapName = it
+                            mainViewModel.mapStyle = it
                         },
-                        label = { Text(stringResource(R.string.label_map_name)) },
+                        label = { Text(stringResource(R.string.label_map_style)) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                     )
                     Spacer(modifier = Modifier.height(16.dp))

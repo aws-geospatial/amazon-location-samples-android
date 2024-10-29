@@ -42,16 +42,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import okhttp3.OkHttpClient
 import org.maplibre.android.MapLibre
 import org.maplibre.android.camera.CameraPosition
 import org.maplibre.android.geometry.LatLng
 import org.maplibre.android.maps.MapLibreMap
 import org.maplibre.android.maps.OnMapReadyCallback
 import org.maplibre.android.maps.Style
-import org.maplibre.android.module.http.HttpRequestUtil
 import software.amazon.location.auth.AuthHelper
-import software.amazon.location.auth.AwsSignerInterceptor
 import software.amazon.location.auth.EncryptedSharedPreferences
 import software.amazon.location.sample.helper.DialogHelper
 import software.amazon.location.sample.helper.Helper
@@ -365,12 +362,32 @@ class MainActivity : ComponentActivity(), LocationTrackingCallback, OnMapReadyCa
                     encryptedSharedPreferences.get(Constant.PREFS_KEY_IDENTITY_POOL_ID) ?: ""
                 mainViewModel.trackerName =
                     encryptedSharedPreferences.get(Constant.PREFS_KEY_TRACKER_NAME) ?: ""
-                mainViewModel.mapName =
-                    encryptedSharedPreferences.get(Constant.PREFS_KEY_MAP_NAME) ?: ""
+                mainViewModel.mapStyle =
+                    encryptedSharedPreferences.get(Constant.PREFS_KEY_MAP_STYLE) ?: ""
+                mainViewModel.apiKey =
+                    encryptedSharedPreferences.get(Constant.PREFS_KEY_API_KEY) ?: ""
+                mainViewModel.region =
+                    encryptedSharedPreferences.get(Constant.PREFS_KEY_REGION) ?: ""
             }
             if (mainViewModel.identityPoolId.isEmpty()) {
                 helper.showToast(
                     getString(R.string.error_please_enter_identity_pool_id),
+                    this@MainActivity
+                )
+                return@launch
+            }
+
+            if (mainViewModel.apiKey.isEmpty()) {
+                helper.showToast(
+                    getString(R.string.error_please_enter_api_key),
+                    this@MainActivity
+                )
+                return@launch
+            }
+
+            if (mainViewModel.region.isEmpty()) {
+                helper.showToast(
+                    getString(R.string.error_please_enter_api_key_region),
                     this@MainActivity
                 )
                 return@launch
@@ -382,30 +399,19 @@ class MainActivity : ComponentActivity(), LocationTrackingCallback, OnMapReadyCa
                 )
                 return@launch
             }
-            if (mainViewModel.mapName.isEmpty()) {
-                helper.showToast(getString(R.string.error_please_enter_map_name), this@MainActivity)
+            if (mainViewModel.mapStyle.isEmpty()) {
+                helper.showToast(getString(R.string.error_please_enter_map_style), this@MainActivity)
                 return@launch
             }
-            encryptedSharedPreferences.put(
-                Constant.PREFS_KEY_TRACKER_NAME,
-                mainViewModel.trackerName
-            )
-            encryptedSharedPreferences.put(Constant.PREFS_KEY_MAP_NAME, mainViewModel.mapName)
+            encryptedSharedPreferences.put(Constant.PREFS_KEY_TRACKER_NAME, mainViewModel.trackerName)
+            encryptedSharedPreferences.put(Constant.PREFS_KEY_MAP_STYLE, mainViewModel.mapStyle)
+            encryptedSharedPreferences.put(Constant.PREFS_KEY_API_KEY, mainViewModel.apiKey)
+            encryptedSharedPreferences.put(Constant.PREFS_KEY_REGION, mainViewModel.region)
+            encryptedSharedPreferences.put(Constant.PREFS_KEY_MAP_STYLE, mainViewModel.mapStyle)
             mainViewModel.isLoading = true
             mainViewModel.initializeLocationCredentialsProvider(authHelper)
             mainViewModel.setUserAuthenticated()
             mainViewModel.locationCredentialsProvider?.let {
-                HttpRequestUtil.setOkHttpClient(
-                    OkHttpClient.Builder()
-                        .addInterceptor(
-                            AwsSignerInterceptor(
-                                Constant.SERVICE_NAME,
-                                mainViewModel.identityPoolId.split(":")[0],
-                                it
-                            )
-                        )
-                        .build()
-                )
                 val config = LocationTrackerConfig(
                     trackerName = mainViewModel.trackerName,
                     logLevel = TrackingSdkLogLevel.DEBUG,
@@ -544,10 +550,13 @@ class MainActivity : ComponentActivity(), LocationTrackingCallback, OnMapReadyCa
         Logger.log("getDeviceLocation onLocationAvailabilityChanged")
     }
 
+    private fun getMapUrl() =
+        "https://maps.geo.${mainViewModel.region}.amazonaws.com/v2/styles/${mainViewModel.mapStyle}/descriptor?key=${mainViewModel.apiKey}"
+
     override fun onMapReady(map: MapLibreMap) {
         map.setStyle(
             Style.Builder()
-                .fromUri("https://maps.geo.${mainViewModel.identityPoolId.split(":")[0]}.amazonaws.com/maps/v0/maps/${mainViewModel.mapName}/style-descriptor"),
+                .fromUri(getMapUrl()),
         ) {
             map.uiSettings.isAttributionEnabled = true
             map.uiSettings.isLogoEnabled = false
