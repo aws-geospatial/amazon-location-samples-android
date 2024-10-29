@@ -76,11 +76,14 @@ dependencies {
     implementation(libs.org.maplibre.gl)
     implementation(libs.com.squareup.okhttp3)
     if (findProject(":authSdk") != null) {
+        //TODO remove this once auth sdk updated
         implementation(project(mapOf("path" to ":authSdk")))
     } else {
+        //TODO update this once auth sdk updated
         implementation(libs.auth)
     }
     implementation(libs.tracking)
+    //TODO update this once places sdk is live
     implementation(libs.geoplaces)
     testImplementation(libs.mockk)
     testImplementation(libs.mockito.core)
