@@ -40,10 +40,12 @@ import software.amazon.location.tracking.config.LocationTrackerConfig
 
 class MainViewModel : ViewModel() {
     var locationTracker: LocationTracker? = null
-    var locationCredentialsProvider: LocationCredentialsProvider? = null
+    var trackerCredentialsProvider: LocationCredentialsProvider? = null
+    private var placesCredentialsProvider: LocationCredentialsProvider? = null
     var authenticated by mutableStateOf(false)
     var mapStyle by mutableStateOf(BuildConfig.MAP_STYLE)
-    var region by mutableStateOf(BuildConfig.REGION)
+    var apiKeyRegion by mutableStateOf(BuildConfig.API_KEY_REGION)
+    var apiKey by mutableStateOf(BuildConfig.API_KEY)
     var identityPoolId by mutableStateOf(BuildConfig.IDENTITY_POOL_ID)
     var trackerName by mutableStateOf(BuildConfig.TRACKER_NAME)
     var label by mutableStateOf("")
@@ -58,9 +60,12 @@ class MainViewModel : ViewModel() {
     var getPlaceClient: GeoPlacesClient ?= null
     var amazonPlacesClient: AmazonPlacesClient ?= null
 
-    suspend fun initializeLocationCredentialsProvider(authHelper: AuthHelper) {
-        locationCredentialsProvider = viewModelScope.async {
-            authHelper.authenticateWithCognitoIdentityPool(identityPoolId)
+    suspend fun initializeLocationCredentialsProvider(context: Context) {
+        trackerCredentialsProvider = viewModelScope.async {
+            AuthHelper.withCognitoIdentityPool(identityPoolId, context)
+        }.await()
+        placesCredentialsProvider = viewModelScope.async {
+            AuthHelper.withApiKey(apiKey, apiKeyRegion, context)
         }.await()
     }
 
@@ -77,13 +82,11 @@ class MainViewModel : ViewModel() {
     suspend fun reverseGeocode(latLng: LatLng): String? {
         try {
             if (getPlaceClient == null || amazonPlacesClient == null) {
-                getPlaceClient =
-                    GeoPlacesClient {
-                        region = BuildConfig.API_KEY_REGION
-                        endpointUrl = Url.parse("https://geo.${BuildConfig.API_KEY_REGION}.amazonaws.com/v2")
-                        credentialsProvider = createEmptyCredentialsProvider()
-                    }
-                amazonPlacesClient = AmazonPlacesClient(getPlaceClient)
+                placesCredentialsProvider?.let {
+                    getPlaceClient =
+                        GeoPlacesClient(it.getGeoPlacesClientConfig())
+                    amazonPlacesClient = AmazonPlacesClient(getPlaceClient)
+                }
             }
             val response = amazonPlacesClient?.reverseGeocode(
                 latLng.longitude,
@@ -154,11 +157,19 @@ class MainViewModel : ViewModel() {
             return true
         }
         if (mapStyle.isEmpty()) {
-            helper.showToast(context.getString(R.string.error_please_enter_map_name), context)
+            helper.showToast(context.getString(R.string.error_please_enter_map_style), context)
             return true
         }
-        if (region.isEmpty()) {
+        if (apiKeyRegion.isEmpty()) {
             helper.showToast(context.getString(R.string.error_please_enter_region), context)
+            return true
+        }
+        if (apiKey.isEmpty()) {
+            helper.showToast(context.getString(R.string.error_please_enter_api_key), context)
+            return true
+        }
+        if (trackerName.isEmpty()) {
+            helper.showToast(context.getString(R.string.error_please_enter_tracker_name), context)
             return true
         }
         return false
@@ -198,13 +209,4 @@ class MainViewModel : ViewModel() {
         intent.data = Uri.fromParts("package", context.packageName, null)
         context.startActivity(intent)
     }
-
-    private fun createEmptyCredentialsProvider(): CredentialsProvider =
-        StaticCredentialsProvider(
-            Credentials.invoke(
-                accessKeyId = "",
-                secretAccessKey = "",
-                sessionToken = null,
-            ),
-        )
 }
