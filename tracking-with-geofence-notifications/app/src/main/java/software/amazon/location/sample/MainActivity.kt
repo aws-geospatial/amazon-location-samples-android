@@ -48,7 +48,6 @@ import org.maplibre.android.geometry.LatLng
 import org.maplibre.android.maps.MapLibreMap
 import org.maplibre.android.maps.OnMapReadyCallback
 import org.maplibre.android.maps.Style
-import software.amazon.location.auth.AuthHelper
 import software.amazon.location.auth.EncryptedSharedPreferences
 import software.amazon.location.sample.helper.DialogHelper
 import software.amazon.location.sample.helper.Helper
@@ -72,7 +71,6 @@ import software.amazon.location.tracking.util.TrackingSdkLogLevel
 class MainActivity : ComponentActivity(), LocationTrackingCallback, OnMapReadyCallback {
 
     private lateinit var encryptedSharedPreferences: EncryptedSharedPreferences
-    private lateinit var authHelper: AuthHelper
     private lateinit var deviceIdProvider: DeviceIdProvider
     private val coroutineScope = MainScope()
     private var isForBackgroundPermissionAsked: Boolean = false
@@ -187,7 +185,6 @@ class MainActivity : ComponentActivity(), LocationTrackingCallback, OnMapReadyCa
         MapLibre.getInstance(this)
         super.onCreate(savedInstanceState)
         deviceIdProvider = DeviceIdProvider(applicationContext)
-        authHelper = AuthHelper(applicationContext)
         dialogHelper = DialogHelper(this)
         mainViewModel.enableGeofences = BuildConfig.MQTT_END_POINT.isNotEmpty()
                 && BuildConfig.POLICY_NAME.isNotEmpty()
@@ -409,7 +406,7 @@ class MainActivity : ComponentActivity(), LocationTrackingCallback, OnMapReadyCa
             encryptedSharedPreferences.put(Constant.PREFS_KEY_REGION, mainViewModel.region)
             encryptedSharedPreferences.put(Constant.PREFS_KEY_MAP_STYLE, mainViewModel.mapStyle)
             mainViewModel.isLoading = true
-            mainViewModel.initializeLocationCredentialsProvider(authHelper)
+            mainViewModel.initializeLocationCredentialsProvider(applicationContext)
             mainViewModel.setUserAuthenticated()
             mainViewModel.locationCredentialsProvider?.let {
                 val config = LocationTrackerConfig(

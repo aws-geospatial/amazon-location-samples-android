@@ -60,9 +60,9 @@ class MainViewModel : ViewModel() {
     var enableGeofences = false
     var locationCredentialsProvider: LocationCredentialsProvider? = null
 
-    suspend fun initializeLocationCredentialsProvider(authHelper: AuthHelper) {
+    suspend fun initializeLocationCredentialsProvider(context: Context) {
         locationCredentialsProvider = viewModelScope.async {
-            authHelper.authenticateWithCognitoIdentityPool(identityPoolId)
+            AuthHelper.withCognitoIdentityPool(identityPoolId, context)
         }.await()
     }
 
