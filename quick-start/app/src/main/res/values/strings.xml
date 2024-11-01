@@ -6,9 +6,10 @@
     <string name="label_region">Region</string>
     <string name="label_place_index_name">Place index name</string>
     <string name="error_please_enter_identity_pool_id">Please enter identity pool id</string>
-    <string name="error_please_enter_map_name">Please enter map name</string>
-    <string name="error_please_enter_region">Please enter region</string>
-    <string name="error_please_enter_place_index">Please enter place index name</string>
+    <string name="error_please_enter_map_style">Please enter map style</string>
+    <string name="error_please_enter_region">Please enter API Key region</string>
+    <string name="error_please_enter_api_key">Please enter API Key</string>
+    <string name="error_please_enter_tracker_name">Please enter Tracker Name</string>
     <string name="label_permission_required">Permission Required</string>
     <string name="label_open_settings">Open Settings</string>
     <string name="label_cancel">Cancel</string>

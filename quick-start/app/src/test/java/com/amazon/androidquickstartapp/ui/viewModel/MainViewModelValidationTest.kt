@@ -2,8 +2,10 @@ package com.amazon.androidquickstartapp.ui.viewModel
 
 import android.content.Context
 import com.amazon.androidquickstartapp.utils.Constants.IDENTITY_POOL_ID
-import com.amazon.androidquickstartapp.utils.Constants.MAP_NAME
-import com.amazon.androidquickstartapp.utils.Constants.REGION
+import com.amazon.androidquickstartapp.utils.Constants.MAP_STYLE
+import com.amazon.androidquickstartapp.utils.Constants.API_KEY_REGION
+import com.amazon.androidquickstartapp.utils.Constants.API_KEY
+import com.amazon.androidquickstartapp.utils.Constants.TRACKER_NAME
 import com.amazon.androidquickstartapp.utils.Helper
 import io.mockk.every
 import io.mockk.just
@@ -38,17 +40,21 @@ class MainViewModelValidationTest {
         every { mockHelper.showToast(any(), any()) } just runs
         viewModel.identityPoolId = ""
         viewModel.mapStyle  = ""
-        viewModel.region = ""
+        viewModel.apiKey = ""
+        viewModel.apiKeyRegion = ""
+        viewModel.trackerName = ""
 
         assertEquals(true, viewModel.checkValidations(context))
     }
 
     @Test
-    fun `test checkValidations when mapName is empty`() {
+    fun `test checkValidations when mapStyle is empty`() {
         every { mockHelper.showToast(any(), any()) } just runs
         viewModel.identityPoolId = IDENTITY_POOL_ID
         viewModel.mapStyle = ""
-        viewModel.region = REGION
+        viewModel.apiKeyRegion = API_KEY_REGION
+        viewModel.apiKey = API_KEY
+        viewModel.trackerName = TRACKER_NAME
 
         assertEquals(true, viewModel.checkValidations(context))
     }
@@ -56,8 +62,10 @@ class MainViewModelValidationTest {
     @Test
     fun `test checkValidations when all fields are not empty`() {
         viewModel.identityPoolId = IDENTITY_POOL_ID
-        viewModel.mapStyle = MAP_NAME
-        viewModel.region = REGION
+        viewModel.mapStyle = MAP_STYLE
+        viewModel.apiKeyRegion = API_KEY_REGION
+        viewModel.apiKey = API_KEY
+        viewModel.trackerName = TRACKER_NAME
 
         assertEquals(false, viewModel.checkValidations(context))
     }

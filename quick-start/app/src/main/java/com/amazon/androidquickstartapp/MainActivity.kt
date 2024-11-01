@@ -37,7 +37,6 @@ import org.maplibre.android.maps.MapLibreMap
 import org.maplibre.android.maps.OnMapReadyCallback
 import org.maplibre.android.maps.Style
 import org.maplibre.geojson.Point
-import software.amazon.location.auth.AuthHelper
 import software.amazon.location.tracking.aws.LocationTrackingCallback
 import software.amazon.location.tracking.config.LocationTrackerConfig
 import software.amazon.location.tracking.database.LocationEntry
@@ -48,7 +47,6 @@ import software.amazon.location.tracking.util.TrackingSdkLogLevel
 class MainActivity : ComponentActivity(), OnMapReadyCallback, MapLibreMap.OnCameraIdleListener,
     MapLibreMap.OnCameraMoveStartedListener {
 
-    private lateinit var authHelper: AuthHelper
     private val mainViewModel: MainViewModel by viewModels()
     private val coroutineScope = MainScope()
     private var isRequestingForTracking = false
@@ -245,10 +243,9 @@ class MainActivity : ComponentActivity(), OnMapReadyCallback, MapLibreMap.OnCame
     private fun signInUser() {
         coroutineScope.launch {
             if (mainViewModel.checkValidations(this@MainActivity)) return@launch
-            authHelper = AuthHelper(applicationContext)
-            mainViewModel.initializeLocationCredentialsProvider(authHelper)
+            mainViewModel.initializeLocationCredentialsProvider(applicationContext)
             mainViewModel.authenticated = true
-            mainViewModel.locationCredentialsProvider?.let {
+            mainViewModel.trackerCredentialsProvider?.let {
                 val config = LocationTrackerConfig(
                     trackerName = mainViewModel.trackerName,
                     logLevel = TrackingSdkLogLevel.DEBUG,

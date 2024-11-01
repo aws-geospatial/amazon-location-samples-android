@@ -21,7 +21,6 @@ android {
         buildConfigField("String", "API_KEY", "\"${customConfig.getProperty("API_KEY")}\"")
         buildConfigField("String", "IDENTITY_POOL_ID", "\"${customConfig.getProperty("IDENTITY_POOL_ID")}\"")
         buildConfigField("String", "TRACKER_NAME", "\"${customConfig.getProperty("TRACKER_NAME")}\"")
-        buildConfigField("String", "REGION", "\"${customConfig.getProperty("REGION")}\"")
         buildConfigField("String", "MAP_STYLE", "\"${customConfig.getProperty("MAP_STYLE")}\"")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -50,7 +49,7 @@ android {
         buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.7"
     }
     packaging {
         resources {
@@ -75,15 +74,8 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.org.maplibre.gl)
     implementation(libs.com.squareup.okhttp3)
-    if (findProject(":authSdk") != null) {
-        //TODO remove this once auth sdk updated
-        implementation(project(mapOf("path" to ":authSdk")))
-    } else {
-        //TODO update this once auth sdk updated
-        implementation(libs.auth)
-    }
+    implementation(libs.auth)
     implementation(libs.tracking)
-    //TODO update this once places sdk is live
     implementation(libs.geoplaces)
     testImplementation(libs.mockk)
     testImplementation(libs.mockito.core)
