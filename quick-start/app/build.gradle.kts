@@ -17,11 +17,11 @@ android {
         versionCode = 1
         versionName = "1.0.0"
 
+        buildConfigField("String", "API_KEY_REGION", "\"${customConfig.getProperty("API_KEY_REGION")}\"")
+        buildConfigField("String", "API_KEY", "\"${customConfig.getProperty("API_KEY")}\"")
         buildConfigField("String", "IDENTITY_POOL_ID", "\"${customConfig.getProperty("IDENTITY_POOL_ID")}\"")
         buildConfigField("String", "TRACKER_NAME", "\"${customConfig.getProperty("TRACKER_NAME")}\"")
-        buildConfigField("String", "REGION", "\"${customConfig.getProperty("REGION")}\"")
-        buildConfigField("String", "PLACE_INDEX", "\"${customConfig.getProperty("PLACE_INDEX")}\"")
-        buildConfigField("String", "MAP_NAME", "\"${customConfig.getProperty("MAP_NAME")}\"")
+        buildConfigField("String", "MAP_STYLE", "\"${customConfig.getProperty("MAP_STYLE")}\"")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
@@ -49,7 +49,7 @@ android {
         buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.7"
     }
     packaging {
         resources {
@@ -74,9 +74,9 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.org.maplibre.gl)
     implementation(libs.com.squareup.okhttp3)
-    implementation(libs.location)
     implementation(libs.auth)
     implementation(libs.tracking)
+    implementation(libs.geoplaces)
     testImplementation(libs.mockk)
     testImplementation(libs.mockito.core)
     androidTestImplementation(libs.androidx.uiautomator)

@@ -13,9 +13,14 @@ import androidx.compose.runtime.setValue
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import aws.sdk.kotlin.services.location.model.LocationException
+import aws.sdk.kotlin.runtime.auth.credentials.StaticCredentialsProvider
+import aws.sdk.kotlin.services.geoplaces.GeoPlacesClient
+import aws.smithy.kotlin.runtime.auth.awscredentials.Credentials
+import aws.smithy.kotlin.runtime.auth.awscredentials.CredentialsProvider
+import aws.smithy.kotlin.runtime.net.url.Url
 import com.amazon.androidquickstartapp.BuildConfig
 import com.amazon.androidquickstartapp.R
+import com.amazon.androidquickstartapp.utils.AmazonPlacesClient
 import com.amazon.androidquickstartapp.utils.Constants
 import com.amazon.androidquickstartapp.utils.Helper
 import com.amazon.androidquickstartapp.utils.MapHelper
@@ -26,7 +31,6 @@ import org.maplibre.android.location.LocationComponent
 import org.maplibre.android.location.OnLocationCameraTransitionListener
 import org.maplibre.android.location.modes.CameraMode
 import org.maplibre.android.maps.MapLibreMap
-import com.amazon.androidquickstartapp.utils.AmazonLocationClient
 import kotlinx.coroutines.async
 import software.amazon.location.auth.AuthHelper
 import software.amazon.location.auth.LocationCredentialsProvider
@@ -36,11 +40,12 @@ import software.amazon.location.tracking.config.LocationTrackerConfig
 
 class MainViewModel : ViewModel() {
     var locationTracker: LocationTracker? = null
-    var locationCredentialsProvider: LocationCredentialsProvider? = null
+    var trackerCredentialsProvider: LocationCredentialsProvider? = null
+    private var placesCredentialsProvider: LocationCredentialsProvider? = null
     var authenticated by mutableStateOf(false)
-    var mapName by mutableStateOf(BuildConfig.MAP_NAME)
-    var region by mutableStateOf(BuildConfig.REGION)
-    var indexName by mutableStateOf(BuildConfig.PLACE_INDEX)
+    var mapStyle by mutableStateOf(BuildConfig.MAP_STYLE)
+    var apiKeyRegion by mutableStateOf(BuildConfig.API_KEY_REGION)
+    var apiKey by mutableStateOf(BuildConfig.API_KEY)
     var identityPoolId by mutableStateOf(BuildConfig.IDENTITY_POOL_ID)
     var trackerName by mutableStateOf(BuildConfig.TRACKER_NAME)
     var label by mutableStateOf("")
@@ -52,10 +57,15 @@ class MainViewModel : ViewModel() {
     var helper = Helper()
     var mapHelper = MapHelper()
     var layerSize: Int = 0
+    var getPlaceClient: GeoPlacesClient ?= null
+    var amazonPlacesClient: AmazonPlacesClient ?= null
 
-    suspend fun initializeLocationCredentialsProvider(authHelper: AuthHelper) {
-        locationCredentialsProvider = viewModelScope.async {
-            authHelper.authenticateWithCognitoIdentityPool(identityPoolId)
+    suspend fun initializeLocationCredentialsProvider(context: Context) {
+        trackerCredentialsProvider = viewModelScope.async {
+            AuthHelper.withCognitoIdentityPool(identityPoolId, context)
+        }.await()
+        placesCredentialsProvider = viewModelScope.async {
+            AuthHelper.withApiKey(apiKey, apiKeyRegion, context)
         }.await()
     }
 
@@ -71,23 +81,22 @@ class MainViewModel : ViewModel() {
 
     suspend fun reverseGeocode(latLng: LatLng): String? {
         try {
-            val amazonLocationClient =
-                locationCredentialsProvider?.getLocationClient()?.let { AmazonLocationClient(it) }
-            val response = amazonLocationClient?.reverseGeocode(
-                indexName,
+            if (getPlaceClient == null || amazonPlacesClient == null) {
+                placesCredentialsProvider?.let {
+                    getPlaceClient =
+                        GeoPlacesClient(it.getGeoPlacesClientConfig())
+                    amazonPlacesClient = AmazonPlacesClient(getPlaceClient)
+                }
+            }
+            val response = amazonPlacesClient?.reverseGeocode(
                 latLng.longitude,
                 latLng.latitude,
                 mLanguage = "en",
                 mMaxResults = 1
             )
 
-            return response?.results?.firstOrNull()?.place?.label
+            return response?.resultItems?.firstOrNull()?.title
         } catch (e: Exception) {
-            if (e is LocationException && e.message.contains("expired")) {
-                viewModelScope.launch {
-                    locationCredentialsProvider?.refresh()
-                }
-            }
             e.printStackTrace()
             return ""
         }
@@ -147,19 +156,20 @@ class MainViewModel : ViewModel() {
             )
             return true
         }
-        if (mapName.isEmpty()) {
-            helper.showToast(context.getString(R.string.error_please_enter_map_name), context)
+        if (mapStyle.isEmpty()) {
+            helper.showToast(context.getString(R.string.error_please_enter_map_style), context)
             return true
         }
-        if (region.isEmpty()) {
+        if (apiKeyRegion.isEmpty()) {
             helper.showToast(context.getString(R.string.error_please_enter_region), context)
             return true
         }
-        if (indexName.isEmpty()) {
-            helper.showToast(
-                context.getString(R.string.error_please_enter_place_index),
-                context
-            )
+        if (apiKey.isEmpty()) {
+            helper.showToast(context.getString(R.string.error_please_enter_api_key), context)
+            return true
+        }
+        if (trackerName.isEmpty()) {
+            helper.showToast(context.getString(R.string.error_please_enter_tracker_name), context)
             return true
         }
         return false

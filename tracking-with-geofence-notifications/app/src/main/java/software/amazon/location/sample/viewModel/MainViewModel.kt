@@ -44,7 +44,9 @@ class MainViewModel : ViewModel() {
     var isLoading: Boolean by mutableStateOf(false)
     var identityPoolId by mutableStateOf("")
     var trackerName by mutableStateOf("")
-    var mapName by mutableStateOf("")
+    var region by mutableStateOf("")
+    var apiKey by mutableStateOf("")
+    var mapStyle by mutableStateOf("")
     var timeFilterEnabled: Boolean by mutableStateOf(false)
     var distanceFilterEnabled: Boolean by mutableStateOf(false)
     var accuracyFilterEnabled: Boolean by mutableStateOf(false)
@@ -58,9 +60,9 @@ class MainViewModel : ViewModel() {
     var enableGeofences = false
     var locationCredentialsProvider: LocationCredentialsProvider? = null
 
-    suspend fun initializeLocationCredentialsProvider(authHelper: AuthHelper) {
+    suspend fun initializeLocationCredentialsProvider(context: Context) {
         locationCredentialsProvider = viewModelScope.async {
-            authHelper.authenticateWithCognitoIdentityPool(identityPoolId)
+            AuthHelper.withCognitoIdentityPool(identityPoolId, context)
         }.await()
     }
 

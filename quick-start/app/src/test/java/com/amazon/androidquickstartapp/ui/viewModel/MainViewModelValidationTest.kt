@@ -2,9 +2,10 @@ package com.amazon.androidquickstartapp.ui.viewModel
 
 import android.content.Context
 import com.amazon.androidquickstartapp.utils.Constants.IDENTITY_POOL_ID
-import com.amazon.androidquickstartapp.utils.Constants.INDEX_NAME
-import com.amazon.androidquickstartapp.utils.Constants.MAP_NAME
-import com.amazon.androidquickstartapp.utils.Constants.REGION
+import com.amazon.androidquickstartapp.utils.Constants.MAP_STYLE
+import com.amazon.androidquickstartapp.utils.Constants.API_KEY_REGION
+import com.amazon.androidquickstartapp.utils.Constants.API_KEY
+import com.amazon.androidquickstartapp.utils.Constants.TRACKER_NAME
 import com.amazon.androidquickstartapp.utils.Helper
 import io.mockk.every
 import io.mockk.just
@@ -38,20 +39,22 @@ class MainViewModelValidationTest {
     fun `test checkValidations when all fields are empty`() {
         every { mockHelper.showToast(any(), any()) } just runs
         viewModel.identityPoolId = ""
-        viewModel.mapName  = ""
-        viewModel.region = ""
-        viewModel.indexName = ""
+        viewModel.mapStyle  = ""
+        viewModel.apiKey = ""
+        viewModel.apiKeyRegion = ""
+        viewModel.trackerName = ""
 
         assertEquals(true, viewModel.checkValidations(context))
     }
 
     @Test
-    fun `test checkValidations when mapName is empty`() {
+    fun `test checkValidations when mapStyle is empty`() {
         every { mockHelper.showToast(any(), any()) } just runs
         viewModel.identityPoolId = IDENTITY_POOL_ID
-        viewModel.mapName = ""
-        viewModel.region = REGION
-        viewModel.indexName = INDEX_NAME
+        viewModel.mapStyle = ""
+        viewModel.apiKeyRegion = API_KEY_REGION
+        viewModel.apiKey = API_KEY
+        viewModel.trackerName = TRACKER_NAME
 
         assertEquals(true, viewModel.checkValidations(context))
     }
@@ -59,9 +62,10 @@ class MainViewModelValidationTest {
     @Test
     fun `test checkValidations when all fields are not empty`() {
         viewModel.identityPoolId = IDENTITY_POOL_ID
-        viewModel.mapName = MAP_NAME
-        viewModel.region = REGION
-        viewModel.indexName = INDEX_NAME
+        viewModel.mapStyle = MAP_STYLE
+        viewModel.apiKeyRegion = API_KEY_REGION
+        viewModel.apiKey = API_KEY
+        viewModel.trackerName = TRACKER_NAME
 
         assertEquals(false, viewModel.checkValidations(context))
     }

@@ -27,7 +27,9 @@ android {
         buildConfigField("String", "TOPIC_TRACKER", "\"${customConfig.getProperty("TOPIC_TRACKER")}\"")
         buildConfigField("String", "DEFAULT_TRACKER_NAME", "\"${customConfig.getProperty("DEFAULT_TRACKER_NAME")}\"")
         buildConfigField("String", "TEST_POOL_ID", "\"${customConfig.getProperty("TEST_POOL_ID")}\"")
-        buildConfigField("String", "TEST_MAP_NAME", "\"${customConfig.getProperty("TEST_MAP_NAME")}\"")
+        buildConfigField("String", "TEST_MAP_STYLE", "\"${customConfig.getProperty("TEST_MAP_STYLE")}\"")
+        buildConfigField("String", "TEST_API_KEY_REGION", "\"${customConfig.getProperty("TEST_API_KEY_REGION")}\"")
+        buildConfigField("String", "TEST_API_KEY", "\"${customConfig.getProperty("TEST_API_KEY")}\"")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -52,7 +54,7 @@ android {
         buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.7"
     }
     packaging {
         resources {
@@ -63,39 +65,31 @@ android {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
-    implementation("androidx.activity:activity-compose:1.8.2")
-    implementation(platform("androidx.compose:compose-bom:2023.08.00"))
+    implementation("androidx.core:core-ktx:1.13.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
+    implementation("androidx.activity:activity-compose:1.9.3")
+    implementation(platform("androidx.compose:compose-bom:2024.10.01"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
-    implementation("com.google.android.gms:play-services-location:21.1.0")
-    implementation("org.maplibre.gl:android-sdk:11.0.0-pre5")
+    implementation("com.google.android.gms:play-services-location:21.3.0")
+    implementation("org.maplibre.gl:android-sdk:11.5.2")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation("aws.sdk.kotlin:cognitoidentity:1.2.21")
+    implementation("aws.sdk.kotlin:cognitoidentity:1.3.65")
     implementation("com.amazonaws:aws-iot-device-sdk-java:1.3.9")
-    implementation("aws.sdk.kotlin:iot:1.2.28")
-    implementation("aws.sdk.kotlin:location:1.2.21")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.6.5")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.5")
+    implementation("aws.sdk.kotlin:iot:1.3.29")
+    implementation("aws.sdk.kotlin:location:1.3.65")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.7.5")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:1.7.5")
     androidTestImplementation("androidx.test.uiautomator:uiautomator:2.3.0")
-    if (findProject(":authSdk") != null) {
-        implementation(project(mapOf("path" to ":authSdk")))
-    } else {
-        implementation("software.amazon.location:auth:0.2.4")
-    }
-    if (findProject(":trackingSdk") != null) {
-        implementation(project(mapOf("path" to ":trackingSdk")))
-    } else {
-        implementation("software.amazon.location:tracking:0.2.4")
-    }
+    implementation("software.amazon.location:auth:1.1.0")
+    implementation("software.amazon.location:tracking:1.0.0")
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+    androidTestImplementation(platform("androidx.compose:compose-bom:2024.10.01"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
